@@ -1,0 +1,2173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM System - Phone Integration</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+        
+        .main-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .login-card {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .dashboard {
+            width: 100%;
+            max-width: 1200px;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .form-control {
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            margin-bottom: 15px;
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+        
+        .btn-success {
+            background: #28a745;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .admin-stat-box {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+        }
+        
+        .nav-tabs {
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 20px;
+        }
+        
+        .nav-tabs .nav-link {
+            border: none;
+            color: #666;
+            padding: 12px 20px;
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .nav-tabs .nav-link.active {
+            background: #667eea;
+            color: white;
+            border: none;
+        }
+        
+        .lead-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .admin-header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .user-info {
+            background: rgba(255,255,255,0.1);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+        
+        .admin-badge {
+            background: #f5576c;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+        
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .user-table th, .user-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .user-table th {
+            background-color: #f2f2f2;
+        }
+        
+        .user-table tr:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .data-persistent {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8em;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            color: black;
+        }
+        
+        .score-display {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .score-change {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.2);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+        }
+        
+        .score-change.negative {
+            background: rgba(255,0,0,0.3);
+        }
+        
+        .score-change.positive {
+            background: rgba(0,255,0,0.3);
+        }
+        
+        .score-number {
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+        
+        .score-input {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        .score-badge {
+            background: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+        
+        .progress {
+            height: 25px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .progress-bar {
+            height: 25px;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .quick-score-btn {
+            margin: 5px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .quick-score-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .score-category {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        
+        .score-history-item {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+        
+        .bulk-score-btn {
+            background: #28a745;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: none;
+            margin: 2px;
+            cursor: pointer;
+        }
+        
+        .bulk-score-btn:hover {
+            background: #218838;
+        }
+        
+        .call-cost {
+            background: #ff6b6b;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            margin-left: 5px;
+        }
+        
+        .settings-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #667eea;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.875rem;
+            border-radius: 4px;
+        }
+        
+        .user-actions {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .delete-warning {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .phone-settings {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .call-animation {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: rgba(40, 167, 69, 0.9);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            animation: pulse 1.5s infinite;
+            z-index: 1000;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7);
+            }
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+            }
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+            }
+        }
+        
+        .hidden-call-animation {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Login Section -->
+        <div id="loginSection" class="login-card">
+            <h2 class="text-center mb-4">CRM Login</h2>
+            
+            <div class="alert alert-info">
+                <strong>Admin Login:</strong> Username: admin, Password: admin123
+            </div>
+            
+            <div id="loginAlert" class="alert hidden"></div>
+            
+            <form id="loginForm">
+                <input type="text" class="form-control" id="username" placeholder="Username" required>
+                <input type="password" class="form-control" id="password" placeholder="Password" required>
+                <button type="submit" class="btn-primary">Login</button>
+            </form>
+            
+            <p class="text-center mt-3 text-muted">
+                Don't have an account? 
+                <a href="#" onclick="showSignup()">Sign Up</a>
+            </p>
+        </div>
+
+        <!-- Signup Section -->
+        <div id="signupSection" class="login-card hidden">
+            <h2 class="text-center mb-4">Create Account</h2>
+            
+            <div id="signupAlert" class="alert hidden"></div>
+            
+            <form id="signupForm">
+                <input type="text" class="form-control" id="newUsername" placeholder="Choose Username" required>
+                <input type="text" class="form-control" id="fullName" placeholder="Full Name" required>
+                <input type="email" class="form-control" id="email" placeholder="Email" required>
+                <input type="password" class="form-control" id="newPassword" placeholder="Password" required>
+                <button type="submit" class="btn-primary">Sign Up</button>
+            </form>
+            
+            <p class="text-center mt-3 text-muted">
+                Already have an account? 
+                <a href="#" onclick="showLogin()">Login</a>
+            </p>
+        </div>
+
+        <!-- User Dashboard Section -->
+        <div id="userDashboardSection" class="dashboard hidden">
+            <div class="header">
+                <div>
+                    <h2>User Dashboard</h2>
+                    <p class="text-muted mb-0">
+                        Welcome, <span id="userDisplay">User</span>
+                        <span class="user-info ms-2">ID: <span id="userIdDisplay">-</span></span>
+                    </p>
+                </div>
+                <button class="btn-primary" style="width: auto;" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+
+            <!-- User Score Display -->
+            <div class="score-display">
+                <div class="score-change" id="scoreChangeIndicator" style="display: none;">
+                    <span id="scoreChangeText"></span>
+                </div>
+                <h4>My Performance Score</h4>
+                <div class="score-number" id="userScoreDisplay">0</div>
+                <div class="progress">
+                    <div class="progress-bar" id="userScoreProgress" role="progressbar" style="width: 0%">
+                        <span id="userScorePercent">0%</span>
+                    </div>
+                </div>
+                <p class="mb-0">Each call costs <span id="callCostDisplay">1</span> point</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-number" id="userLeadCount">0</div>
+                    <div>Total Leads</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="userProjectCount">5</div>
+                    <div>Projects</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="userCallCount">0</div>
+                    <div>Calls Made</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="userTaskCount">12</div>
+                    <div>Tasks</div>
+                </div>
+            </div>
+
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#userLeads">Leads</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#userAddLead">Add Lead</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#userProjects">Projects</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#userHistory">History</a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="userLeads">
+                    <h4>My Leads</h4>
+                    <div id="userLeadsList">
+                        <p class="text-muted">No leads yet. Add your first lead!</p>
+                    </div>
+                </div>
+                
+                <div class="tab-pane fade" id="userAddLead">
+                    <h4>Add New Lead</h4>
+                    <form id="userAddLeadForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <input type="text" class="form-control" id="userLeadName" placeholder="Lead Name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <input type="email" class="form-control" id="userLeadEmail" placeholder="Email" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <input type="tel" class="form-control" id="userLeadPhone" placeholder="Phone" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <select class="form-control" id="userLeadStatus" required>
+                                    <option value="">Select Status</option>
+                                    <option value="New">New</option>
+                                    <option value="Contacted">Contacted</option>
+                                    <option value="Qualified">Qualified</option>
+                                    <option value="Converted">Converted</option>
+                                </select>
+                            </div>
+                        </div>
+                        <textarea class="form-control mb-3" id="userLeadNotes" placeholder="Notes" rows="3"></textarea>
+                        <button type="submit" class="btn-primary">Add Lead</button>
+                    </form>
+                </div>
+                
+                <div class="tab-pane fade" id="userProjects">
+                    <h4>Active Projects</h4>
+                    <div class="lead-item">
+                        <div>
+                            <strong>Website Development</strong><br>
+                            <small class="text-muted">Status: In Progress</small>
+                        </div>
+                        <span class="badge bg-warning">In Progress</span>
+                    </div>
+                    <div class="lead-item">
+                        <div>
+                            <strong>Mobile App</strong><br>
+                            <small class="text-muted">Status: Planning</small>
+                        </div>
+                        <span class="badge bg-info">Planning</span>
+                    </div>
+                    <div class="lead-item">
+                        <div>
+                            <strong>Marketing Campaign</strong><br>
+                            <small class="text-muted">Status: Active</small>
+                        </div>
+                        <span class="badge bg-success">Active</span>
+                    </div>
+                </div>
+                
+                <div class="tab-pane fade" id="userHistory">
+                    <h4>My Activity History</h4>
+                    <div id="userHistoryList">
+                        <p class="text-muted">No activity yet</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard Section -->
+        <div id="adminDashboardSection" class="dashboard hidden">
+            <div class="admin-header">
+                <div>
+                    <h2>Admin Dashboard</h2>
+                    <p class="mb-0">
+                        Welcome, <span id="adminUserDisplay">Admin</span>
+                        <span class="admin-badge">ADMIN</span>
+                    </p>
+                </div>
+                <button class="btn btn-light" style="width: auto;" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+
+            <!-- Admin Settings Section -->
+            <div class="settings-section">
+                <h5><i class="fas fa-cog"></i> Scoring Settings</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Score Deduction Per Call:</label>
+                            <input type="number" class="form-control" id="callCostInput" value="1" min="0" step="0.5">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Enable Score Deduction:</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="scoreDeductionToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="saveScoringSettings()">
+                    <i class="fas fa-save"></i> Save Settings
+                </button>
+            </div>
+
+            <!-- Phone Settings Section -->
+            <div class="phone-settings">
+                <h5><i class="fas fa-phone"></i> Phone Integration Settings</h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Enable Phone Integration:</label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="phoneIntegrationToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Call Method:</label>
+                            <select class="form-control" id="callMethod">
+                                <option value="tel">tel: (Mobile)</option>
+                                <option value="wtai">wtai: (WhatsApp)</option>
+                                <option value="skype">skype: (Skype)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="savePhoneSettings()">
+                    <i class="fas fa-save"></i> Save Settings
+                </button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box admin-stat-box">
+                    <div class="stat-number" id="adminUserCount">0</div>
+                    <div>Total Users</div>
+                </div>
+                <div class="stat-box admin-stat-box">
+                    <div class="stat-number" id="adminLeadCount">0</div>
+                    <div>Total Leads</div>
+                </div>
+                <div class="stat-box admin-stat-box">
+                    <div class="stat-number" id="adminCallCount">0</div>
+                    <div>Total Calls</div>
+                </div>
+                <div class="stat-box admin-stat-box">
+                    <div class="stat-number" id="adminProjectCount">5</div>
+                    <div>Projects</div>
+                </div>
+            </div>
+
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#adminUsers">Users</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#adminLeads">All Leads</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#adminHistory">All History</a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="adminUsers">
+                    <h4>All Users</h4>
+                    <div class="mb-3">
+                        <button class="bulk-score-btn" onclick="openBulkScoreModal()">
+                            <i class="fas fa-users"></i> Bulk Score Update
+                        </button>
+                        <button class="bulk-score-btn" onclick="resetAllScores()">
+                            <i class="fas fa-redo"></i> Reset All Scores
+                        </button>
+                        <button class="bulk-score-btn" onclick="randomizeAllScores()">
+                            <i class="fas fa-dice"></i> Randomize All Scores
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="user-table">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Full Name</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Score</th>
+                                    <th>Calls</th>
+                                    <th>Call Cost</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminUsersList">
+                                <!-- Users will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="tab-pane fade" id="adminLeads">
+                    <h4>All Leads from All Users</h4>
+                    <div id="adminLeadsList">
+                        <!-- Leads will be populated here -->
+                    </div>
+                </div>
+                
+                <div class="tab-pane fade" id="adminHistory">
+                    <h4>All Activity History</h4>
+                    <div id="adminHistoryList">
+                        <!-- History will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call Animation -->
+    <div id="callAnimation" class="call-animation hidden-call-animation">
+        <i class="fas fa-phone"></i>
+    </div>
+
+    <!-- Modal for Admin Confirmation -->
+    <div id="adminModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3>Confirm Admin Action</h3>
+            <p id="adminModalMessage">Are you sure you want to perform this action?</p>
+            <div class="d-flex justify-content-end mt-3">
+                <button class="btn btn-secondary me-2" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-danger" id="confirmAdminBtn">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Delete User Confirmation -->
+    <div id="deleteUserModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeDeleteUserModal()">&times;</span>
+            <h3>Delete User</h3>
+            <div class="delete-warning">
+                <i class="fas fa-exclamation-triangle"></i> <strong>Warning:</strong> This action cannot be undone!
+            </div>
+            <p id="deleteUserModalMessage">Are you sure you want to delete this user?</p>
+            <div class="mb-3">
+                <label class="form-label">Type <strong>DELETE</strong> to confirm:</label>
+                <input type="text" class="form-control" id="deleteConfirmInput" placeholder="Type DELETE to confirm">
+            </div>
+            <div class="d-flex justify-content-end mt-3">
+                <button class="btn btn-secondary me-2" onclick="closeDeleteUserModal()">Cancel</button>
+                <button class="btn btn-danger" id="confirmDeleteBtn" onclick="executeDelete()">Delete User</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Score Management -->
+    <div id="scoreModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeScoreModal()">&times;</span>
+            <h3>Manage User Score</h3>
+            <p id="scoreModalMessage">Update score for this user:</p>
+            
+            <!-- Quick Score Buttons -->
+            <div class="mb-3">
+                <label class="form-label">Quick Score:</label>
+                <div>
+                    <button class="quick-score-btn" onclick="setQuickScore(0)">0</button>
+                    <button class="quick-score-btn" onclick="setQuickScore(25)">25</button>
+                    <button class="quick-score-btn" onclick="setQuickScore(50)">50</button>
+                    <button class="quick-score-btn" onclick="setQuickScore(75)">75</button>
+                    <button class="quick-score-btn" onclick="setQuickScore(100)">100</button>
+                    <button class="quick-score-btn" onclick="setQuickScore(150)">150</button>
+                    <button class="quick-score-btn" onclick="setQuickScore(200)">200</button>
+                    <button class="quick-score-btn" onclick="setQuickScore(500)">500</button>
+                    <button class="quick-score-btn" onclick="setQuickScore(1000)">1000</button>
+                </div>
+            </div>
+            
+            <!-- Custom Score Input -->
+            <div class="mb-3">
+                <label for="scoreInput" class="form-label">Custom Score:</label>
+                <input type="number" class="form-control" id="scoreInput" placeholder="Enter any score value" step="any">
+            </div>
+            
+            <!-- Score Categories -->
+            <div class="mb-3">
+                <label class="form-label">Score Category:</label>
+                <select class="form-control" id="scoreCategory">
+                    <option value="Performance">Performance</option>
+                    <option value="Attendance">Attendance</option>
+                    <option value="Quality">Quality</option>
+                    <option value="Teamwork">Teamwork</option>
+                    <option value="Innovation">Innovation</option>
+                    <option value="Bonus">Bonus</option>
+                    <option value="Penalty">Penalty</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label for="scoreReason" class="form-label">Reason:</label>
+                <input type="text" class="form-control" id="scoreReason" placeholder="e.g., Excellent performance">
+            </div>
+            
+            <!-- Score History -->
+            <div class="mb-3">
+                <label class="form-label">Recent Score Changes:</label>
+                <div id="scoreHistoryList" style="max-height: 150px; overflow-y: auto;">
+                    <!-- Score history will be populated here -->
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-end mt-3">
+                <button class="btn btn-secondary me-2" onclick="closeScoreModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="updateScore()">Update Score</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Bulk Score Update -->
+    <div id="bulkScoreModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeBulkScoreModal()">&times;</span>
+            <h3>Bulk Score Update</h3>
+            <p>Update scores for multiple users at once:</p>
+            
+            <div class="mb-3">
+                <label class="form-label">Quick Actions:</label>
+                <div>
+                    <button class="bulk-score-btn" onclick="setAllScores(0)">Set All to 0</button>
+                    <button class="bulk-score-btn" onclick="setAllScores(50)">Set All to 50</button>
+                    <button class="bulk-score-btn" onclick="setAllScores(100)">Set All to 100</button>
+                    <button class="bulk-score-btn" onclick="addAllScores(10)">Add 10 to All</button>
+                    <button class="bulk-score-btn" onclick="addAllScores(25)">Add 25 to All</button>
+                    <button class="bulk-score-btn" onclick="multiplyAllScores(2)">Double All Scores</button>
+                    <button class="bulk-score-btn" onclick="randomizeAllScores()">Randomize All</button>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="bulkScoreValue" class="form-label">Custom Value:</label>
+                <input type="number" class="form-control" id="bulkScoreValue" placeholder="Enter score value">
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Operation:</label>
+                <select class="form-control" id="bulkOperation">
+                    <option value="set">Set to this value</option>
+                    <option value="add">Add this value</option>
+                    <option value="subtract">Subtract this value</option>
+                    <option value="multiply">Multiply by this value</option>
+                </select>
+            </div>
+            
+            <div class="d-flex justify-content-end mt-3">
+                <button class="btn btn-secondary me-2" onclick="closeBulkScoreModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="applyBulkScore()">Apply</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Data Management with localStorage
+        class CRMDataManager {
+            constructor() {
+                this.loadAllData();
+                this.scoringSettings = this.loadScoringSettings();
+                this.phoneSettings = this.loadPhoneSettings();
+            }
+
+            // Load phone settings
+            loadPhoneSettings() {
+                const savedSettings = localStorage.getItem('crm_phone_settings');
+                if (savedSettings) {
+                    return JSON.parse(savedSettings);
+                }
+                return {
+                    phoneIntegrationEnabled: true,
+                    callMethod: 'tel'
+                };
+            }
+
+            // Save phone settings
+            savePhoneSettings() {
+                localStorage.setItem('crm_phone_settings', JSON.stringify(this.phoneSettings));
+            }
+
+            // Load scoring settings
+            loadScoringSettings() {
+                const savedSettings = localStorage.getItem('crm_scoring_settings');
+                if (savedSettings) {
+                    return JSON.parse(savedSettings);
+                }
+                return {
+                    callCost: 1,
+                    scoreDeductionEnabled: true
+                };
+            }
+
+            // Save scoring settings
+            saveScoringSettings() {
+                localStorage.setItem('crm_scoring_settings', JSON.stringify(this.scoringSettings));
+            }
+
+            // Load all data from localStorage
+            loadAllData() {
+                // Load users
+                const savedUsers = localStorage.getItem('crm_users');
+                this.users = savedUsers ? JSON.parse(savedUsers) : {};
+                
+                // Make sure admin exists
+                if (!this.users['admin']) {
+                    this.users['admin'] = {
+                        username: 'admin',
+                        password: 'admin123',
+                        fullName: 'System Administrator',
+                        email: 'admin@crm.com',
+                        isAdmin: true,
+                        score: 100,
+                        scoreHistory: [],
+                        data: {
+                            leads: [],
+                            history: [],
+                            stats: { leads: 0, calls: 0, tasks: 0 }
+                        },
+                        createdAt: new Date().toISOString()
+                    };
+                    this.saveAllData();
+                }
+                
+                // Initialize score history for existing users
+                for (const username in this.users) {
+                    if (!this.users[username].scoreHistory) {
+                        this.users[username].scoreHistory = [];
+                    }
+                }
+                
+                // Load current user data
+                const currentUserId = localStorage.getItem('crm_current_user');
+                if (currentUserId && this.users[currentUserId]) {
+                    this.currentUser = this.users[currentUserId];
+                    this.userData = this.currentUser.data || {
+                        leads: [],
+                        history: [],
+                        stats: { leads: 0, calls: 0, tasks: 0 }
+                    };
+                } else {
+                    this.currentUser = null;
+                    this.userData = {
+                        leads: [],
+                        history: [],
+                        stats: { leads: 0, calls: 0, tasks: 0 }
+                    };
+                }
+            }
+
+            // Save all data to localStorage
+            saveAllData() {
+                // Save users
+                localStorage.setItem('crm_users', JSON.stringify(this.users));
+                
+                // Save current user
+                if (this.currentUser) {
+                    this.users[this.currentUser.username].data = this.userData;
+                    localStorage.setItem('crm_current_user', this.currentUser.username);
+                }
+            }
+
+            // Create new user
+            createUser(username, password, fullName, email) {
+                if (this.users[username]) {
+                    return { success: false, message: 'Username already exists!' };
+                }
+                
+                this.users[username] = {
+                    username,
+                    password,
+                    fullName,
+                    email,
+                    isAdmin: false,
+                    score: 50,
+                    scoreHistory: [],
+                    data: {
+                        leads: [],
+                        history: [],
+                        stats: { leads: 0, calls: 0, tasks: 0 }
+                    },
+                    createdAt: new Date().toISOString()
+                };
+                
+                this.saveAllData();
+                return { success: true, message: 'Account created successfully!' };
+            }
+
+            // Login user
+            login(username, password) {
+                if (!this.users[username]) {
+                    return { success: false, message: 'User not found!' };
+                }
+                
+                if (this.users[username].password !== password) {
+                    return { success: false, message: 'Wrong password!' };
+                }
+                
+                this.currentUser = this.users[username];
+                this.userData = this.currentUser.data || {
+                    leads: [],
+                    history: [],
+                    stats: { leads: 0, calls: 0, tasks: 0 }
+                };
+                
+                this.saveAllData();
+                return { 
+                    success: true, 
+                    message: 'Login successful!',
+                    isAdmin: this.currentUser.isAdmin || false
+                };
+            }
+
+            // Add lead
+            addLead(lead) {
+                lead.id = Date.now();
+                lead.userId = this.currentUser.username;
+                lead.userFullName = this.currentUser.fullName;
+                lead.createdAt = new Date().toLocaleString();
+                this.userData.leads.push(lead);
+                this.userData.stats.leads++;
+                
+                // Add to history
+                this.userData.history.unshift({
+                    action: 'Lead Added',
+                    details: `New lead "${lead.name}" added`,
+                    date: new Date().toLocaleString(),
+                    userId: this.currentUser.username
+                });
+                
+                this.saveAllData();
+            }
+
+            // Add call to history and deduct score
+            addCall(leadName, phoneNumber) {
+                const oldScore = this.currentUser.score || 50;
+                let newScore = oldScore;
+                
+                // Deduct score if enabled and user is not admin
+                if (this.scoringSettings.scoreDeductionEnabled && !this.currentUser.isAdmin) {
+                    newScore = Math.max(0, oldScore - this.scoringSettings.callCost);
+                    this.currentUser.score = newScore;
+                    
+                    // Add to score history
+                    if (!this.currentUser.scoreHistory) {
+                        this.currentUser.scoreHistory = [];
+                    }
+                    
+                    this.currentUser.scoreHistory.unshift({
+                        oldScore: oldScore,
+                        newScore: newScore,
+                        category: 'Call Cost',
+                        reason: `Score deducted for call to ${leadName}`,
+                        date: new Date().toLocaleString(),
+                        updatedBy: 'System'
+                    });
+                    
+                    // Keep only last 10 score changes
+                    if (this.currentUser.scoreHistory.length > 10) {
+                        this.currentUser.scoreHistory = this.currentUser.scoreHistory.slice(0, 10);
+                    }
+                }
+                
+                this.userData.stats.calls++;
+                this.userData.history.unshift({
+                    action: 'Call Made',
+                    details: `Call made to "${leadName}" ${this.scoringSettings.scoreDeductionEnabled && !this.currentUser.isAdmin ? `(-${this.scoringSettings.callCost} points)` : ''}`,
+                    date: new Date().toLocaleString(),
+                    userId: this.currentUser.username
+                });
+                
+                this.saveAllData();
+                
+                // Return score change info
+                return {
+                    oldScore: oldScore,
+                    newScore: newScore,
+                    scoreChanged: newScore !== oldScore
+                };
+            }
+
+            // Delete user
+            deleteUser(username) {
+                if (!this.users[username]) {
+                    return { success: false, message: 'User not found!' };
+                }
+                
+                // Don't allow deleting the main admin
+                if (username === 'admin') {
+                    return { success: false, message: 'Cannot delete the main admin account!' };
+                }
+                
+                // Don't allow deleting yourself
+                if (this.currentUser && this.currentUser.username === username) {
+                    return { success: false, message: 'Cannot delete your own account while logged in!' };
+                }
+                
+                // Store user info for history
+                const deletedUser = this.users[username];
+                
+                // Delete the user
+                delete this.users[username];
+                
+                // Add to admin history
+                if (this.currentUser && this.currentUser.isAdmin) {
+                    if (!this.users['admin'].data.history) {
+                        this.users['admin'].data.history = [];
+                    }
+                    this.users['admin'].data.history.unshift({
+                        action: 'User Deleted',
+                        details: `User "${username}" (${deletedUser.fullName}) was permanently deleted from the system`,
+                        date: new Date().toLocaleString(),
+                        userId: 'admin'
+                    });
+                }
+                
+                this.saveAllData();
+                return { success: true, message: `User "${username}" has been deleted permanently!` };
+            }
+
+            // Update user score
+            updateScore(username, score, category, reason) {
+                if (!this.users[username]) {
+                    return { success: false, message: 'User not found!' };
+                }
+                
+                const oldScore = this.users[username].score || 50;
+                this.users[username].score = score;
+                
+                // Add to score history
+                if (!this.users[username].scoreHistory) {
+                    this.users[username].scoreHistory = [];
+                }
+                
+                this.users[username].scoreHistory.unshift({
+                    oldScore: oldScore,
+                    newScore: score,
+                    category: category || 'Other',
+                    reason: reason || '',
+                    date: new Date().toLocaleString(),
+                    updatedBy: this.currentUser ? this.currentUser.username : 'System'
+                });
+                
+                // Keep only last 10 score changes
+                if (this.users[username].scoreHistory.length > 10) {
+                    this.users[username].scoreHistory = this.users[username].scoreHistory.slice(0, 10);
+                }
+                
+                // Add to admin history
+                if (this.currentUser && this.currentUser.isAdmin) {
+                    if (!this.users['admin'].data.history) {
+                        this.users['admin'].data.history = [];
+                    }
+                    this.users['admin'].data.history.unshift({
+                        action: 'Score Updated',
+                        details: `Score for "${username}" changed from ${oldScore} to ${score} (${category})${reason ? '. Reason: ' + reason : ''}`,
+                        date: new Date().toLocaleString(),
+                        userId: 'admin'
+                    });
+                }
+                
+                this.saveAllData();
+                return { success: true, message: `Score updated successfully!` };
+            }
+
+            // Bulk update scores
+            bulkUpdateScores(operation, value) {
+                let updatedCount = 0;
+                
+                for (const username in this.users) {
+                    if (username === 'admin') continue; // Skip admin
+                    
+                    const currentScore = this.users[username].score || 50;
+                    let newScore = currentScore;
+                    
+                    switch(operation) {
+                        case 'set':
+                            newScore = value;
+                            break;
+                        case 'add':
+                            newScore = currentScore + value;
+                            break;
+                        case 'subtract':
+                            newScore = currentScore - value;
+                            break;
+                        case 'multiply':
+                            newScore = currentScore * value;
+                            break;
+                    }
+                    
+                    this.users[username].score = newScore;
+                    
+                    // Add to score history
+                    if (!this.users[username].scoreHistory) {
+                        this.users[username].scoreHistory = [];
+                    }
+                    
+                    this.users[username].scoreHistory.unshift({
+                        oldScore: currentScore,
+                        newScore: newScore,
+                        category: 'Bulk Update',
+                        reason: `Bulk ${operation} by ${value}`,
+                        date: new Date().toLocaleString(),
+                        updatedBy: this.currentUser ? this.currentUser.username : 'System'
+                    });
+                    
+                    updatedCount++;
+                }
+                
+                this.saveAllData();
+                return { success: true, message: `Updated scores for ${updatedCount} users!` };
+            }
+
+            // Promote user to admin
+            promoteToAdmin(username) {
+                if (!this.users[username]) {
+                    return { success: false, message: 'User not found!' };
+                }
+                
+                if (this.users[username].isAdmin) {
+                    return { success: false, message: 'User is already an admin!' };
+                }
+                
+                this.users[username].isAdmin = true;
+                this.saveAllData();
+                
+                // Add to admin history
+                if (this.currentUser && this.currentUser.isAdmin) {
+                    if (!this.users['admin'].data.history) {
+                        this.users['admin'].data.history = [];
+                    }
+                    this.users['admin'].data.history.unshift({
+                        action: 'User Promoted',
+                        details: `User "${username}" was promoted to admin`,
+                        date: new Date().toLocaleString(),
+                        userId: 'admin'
+                    });
+                }
+                
+                return { success: true, message: `User "${username}" has been promoted to admin!` };
+            }
+
+            // Demote admin to user
+            demoteFromAdmin(username) {
+                if (!this.users[username]) {
+                    return { success: false, message: 'User not found!' };
+                }
+                
+                if (!this.users[username].isAdmin) {
+                    return { success: false, message: 'User is not an admin!' };
+                }
+                
+                // Don't allow demoting the main admin
+                if (username === 'admin') {
+                    return { success: false, message: 'Cannot demote the main admin account!' };
+                }
+                
+                this.users[username].isAdmin = false;
+                this.saveAllData();
+                
+                // Add to admin history
+                if (this.currentUser && this.currentUser.isAdmin) {
+                    if (!this.users['admin'].data.history) {
+                        this.users['admin'].data.history = [];
+                    }
+                    this.users['admin'].data.history.unshift({
+                        action: 'User Demoted',
+                        details: `User "${username}" was demoted from admin to user`,
+                        date: new Date().toLocaleString(),
+                        userId: 'admin'
+                    });
+                }
+                
+                return { success: true, message: `User "${username}" has been demoted to regular user!` };
+            }
+
+            // Get all users (for admin)
+            getAllUsers() {
+                const users = [];
+                for (const username in this.users) {
+                    users.push({
+                        username,
+                        fullName: this.users[username].fullName,
+                        email: this.users[username].email,
+                        isAdmin: this.users[username].isAdmin || false,
+                        score: this.users[username].score || 50,
+                        leads: this.users[username].data.leads.length,
+                        calls: this.users[username].data.stats.calls
+                    });
+                }
+                return users;
+            }
+
+            // Get all leads (for admin)
+            getAllLeads() {
+                const allLeads = [];
+                for (const username in this.users) {
+                    if (this.users[username].data && this.users[username].data.leads) {
+                        this.users[username].data.leads.forEach(lead => {
+                            allLeads.push({
+                                ...lead,
+                                userId: username,
+                                userFullName: this.users[username].fullName
+                            });
+                        });
+                    }
+                }
+                return allLeads;
+            }
+
+            // Get all history (for admin)
+            getAllHistory() {
+                const allHistory = [];
+                for (const username in this.users) {
+                    if (this.users[username].data && this.users[username].data.history) {
+                        this.users[username].data.history.forEach(item => {
+                            allHistory.push({
+                                ...item,
+                                userId: username,
+                                userFullName: this.users[username].fullName
+                            });
+                        });
+                    }
+                }
+                return allHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
+            }
+
+            // Get total stats (for admin)
+            getTotalStats() {
+                let totalLeads = 0;
+                let totalCalls = 0;
+                let totalUsers = 0;
+                
+                for (const username in this.users) {
+                    if (username !== 'admin') {
+                        totalUsers++;
+                        if (this.users[username].data) {
+                            totalLeads += this.users[username].data.leads.length;
+                            totalCalls += this.users[username].data.stats.calls;
+                        }
+                    }
+                }
+                
+                return {
+                    users: totalUsers,
+                    leads: totalLeads,
+                    calls: totalCalls
+                };
+            }
+
+            // Logout
+            logout() {
+                this.currentUser = null;
+                this.userData = {
+                    leads: [],
+                    history: [],
+                    stats: { leads: 0, calls: 0, tasks: 0 }
+                };
+                localStorage.removeItem('crm_current_user');
+            }
+        }
+
+        // Initialize data manager
+        const dataManager = new CRMDataManager();
+        let currentScoreUser = null;
+        let currentUserToDelete = null;
+
+        // Show signup
+        function showSignup() {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('signupSection').classList.remove('hidden');
+        }
+
+        // Show login
+        function showLogin() {
+            document.getElementById('signupSection').classList.add('hidden');
+            document.getElementById('loginSection').classList.remove('hidden');
+        }
+
+        // Show alert
+        function showAlert(elementId, message, isError = false) {
+            const alertEl = document.getElementById(elementId);
+            alertEl.textContent = message;
+            alertEl.className = isError ? 'alert alert-error' : 'alert alert-success';
+            alertEl.classList.remove('hidden');
+            
+            setTimeout(() => {
+                alertEl.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Handle signup
+        document.getElementById('signupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('newUsername').value;
+            const password = document.getElementById('newPassword').value;
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            
+            const result = dataManager.createUser(username, password, fullName, email);
+            
+            if (result.success) {
+                showAlert('signupAlert', result.message);
+                showLogin();
+                document.getElementById('username').value = username;
+            } else {
+                showAlert('signupAlert', result.message, true);
+            }
+        });
+
+        // Handle login
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            const result = dataManager.login(username, password);
+            
+            if (result.success) {
+                // Hide login, show appropriate dashboard
+                document.getElementById('loginSection').classList.add('hidden');
+                
+                if (result.isAdmin) {
+                    // Show admin dashboard
+                    document.getElementById('adminDashboardSection').classList.remove('hidden');
+                    document.getElementById('adminUserDisplay').textContent = dataManager.currentUser.fullName;
+                    updateAdminDashboard();
+                } else {
+                    // Show user dashboard
+                    document.getElementById('userDashboardSection').classList.remove('hidden');
+                    document.getElementById('userDisplay').textContent = dataManager.currentUser.fullName;
+                    document.getElementById('userIdDisplay').textContent = dataManager.currentUser.username;
+                    updateUserDashboard();
+                }
+                
+                showAlert('loginAlert', result.message);
+            } else {
+                showAlert('loginAlert', result.message, true);
+            }
+        });
+
+        // Add lead (user)
+        document.getElementById('userAddLeadForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const lead = {
+                name: document.getElementById('userLeadName').value,
+                email: document.getElementById('userLeadEmail').value,
+                phone: document.getElementById('userLeadPhone').value,
+                status: document.getElementById('userLeadStatus').value,
+                notes: document.getElementById('userLeadNotes').value
+            };
+            
+            dataManager.addLead(lead);
+            
+            // Update UI
+            updateUserDashboard();
+            
+            // Clear form
+            document.getElementById('userAddLeadForm').reset();
+            
+            // Switch to leads tab
+            const leadsTab = new bootstrap.Tab(document.querySelector('[href="#userLeads"]'));
+            leadsTab.show();
+            
+            alert('Lead added successfully!');
+        });
+
+        // Update user dashboard
+        function updateUserDashboard() {
+            updateStats();
+            updateLeads();
+            updateHistory();
+            updateUserScore();
+        }
+
+        // Update admin dashboard
+        function updateAdminDashboard() {
+            updateAdminStats();
+            updateAdminUsers();
+            updateAdminLeads();
+            updateAdminHistory();
+            updateScoringSettingsUI();
+            updatePhoneSettingsUI();
+        }
+
+        // Update scoring settings UI
+        function updateScoringSettingsUI() {
+            document.getElementById('callCostInput').value = dataManager.scoringSettings.callCost;
+            document.getElementById('scoreDeductionToggle').checked = dataManager.scoringSettings.scoreDeductionEnabled;
+            document.getElementById('callCostDisplay').textContent = dataManager.scoringSettings.callCost;
+        }
+
+        // Update phone settings UI
+        function updatePhoneSettingsUI() {
+            document.getElementById('phoneIntegrationToggle').checked = dataManager.phoneSettings.phoneIntegrationEnabled;
+            document.getElementById('callMethod').value = dataManager.phoneSettings.callMethod;
+        }
+
+        // Save scoring settings
+        function saveScoringSettings() {
+            dataManager.scoringSettings.callCost = parseFloat(document.getElementById('callCostInput').value) || 1;
+            dataManager.scoringSettings.scoreDeductionEnabled = document.getElementById('scoreDeductionToggle').checked;
+            dataManager.saveScoringSettings();
+            
+            // Update UI
+            document.getElementById('callCostDisplay').textContent = dataManager.scoringSettings.callCost;
+            
+            alert('Scoring settings saved successfully!');
+        }
+
+        // Save phone settings
+        function savePhoneSettings() {
+            dataManager.phoneSettings.phoneIntegrationEnabled = document.getElementById('phoneIntegrationToggle').checked;
+            dataManager.phoneSettings.callMethod = document.getElementById('callMethod').value;
+            dataManager.savePhoneSettings();
+            
+            alert('Phone settings saved successfully!');
+        }
+
+        // Update user score display
+        function updateUserScore() {
+            const score = dataManager.currentUser.score || 50;
+            document.getElementById('userScoreDisplay').textContent = score;
+            
+            // Calculate percentage based on a reasonable max value
+            const maxScore = 1000;
+            const percentage = Math.min((score / maxScore) * 100, 100);
+            document.getElementById('userScoreProgress').style.width = percentage + '%';
+            document.getElementById('userScorePercent').textContent = percentage.toFixed(1) + '%';
+        }
+
+        // Show score change indicator
+        function showScoreChange(oldScore, newScore) {
+            const indicator = document.getElementById('scoreChangeIndicator');
+            const text = document.getElementById('scoreChangeText');
+            
+            if (newScore < oldScore) {
+                indicator.className = 'score-change negative';
+                text.textContent = `-${oldScore - newScore}`;
+            } else if (newScore > oldScore) {
+                indicator.className = 'score-change positive';
+                text.textContent = `+${newScore - oldScore}`;
+            }
+            
+            indicator.style.display = 'block';
+            
+            setTimeout(() => {
+                indicator.style.display = 'none';
+            }, 3000);
+        }
+
+        // Show call animation
+        function showCallAnimation(phoneNumber) {
+            const animation = document.getElementById('callAnimation');
+            animation.classList.remove('hidden-call-animation');
+            
+            // Create the phone link
+            let callUrl = '';
+            if (dataManager.phoneSettings.callMethod === 'tel') {
+                callUrl = `tel:${phoneNumber}`;
+            } else if (dataManager.phoneSettings.callMethod === 'wtai') {
+                callUrl = `https://wa.me/${phoneNumber.replace(/[^\d+]/g, '')}`;
+            } else if (dataManager.phoneSettings.callMethod === 'skype') {
+                callUrl = `skype:${phoneNumber}`;
+            }
+            
+            // Open the phone link
+            window.open(callUrl, '_blank');
+            
+            // Hide the animation after 3 seconds
+            setTimeout(() => {
+                animation.classList.add('hidden-call-animation');
+            }, 3000);
+        }
+
+        // Update stats (user)
+        function updateStats() {
+            document.getElementById('userLeadCount').textContent = dataManager.userData.stats.leads;
+            document.getElementById('userCallCount').textContent = dataManager.userData.stats.calls;
+        }
+
+        // Update stats (admin)
+        function updateAdminStats() {
+            const stats = dataManager.getTotalStats();
+            document.getElementById('adminUserCount').textContent = stats.users;
+            document.getElementById('adminLeadCount').textContent = stats.leads;
+            document.getElementById('adminCallCount').textContent = stats.calls;
+        }
+
+        // Update leads (user)
+        function updateLeads() {
+            const leadsList = document.getElementById('userLeadsList');
+            if (dataManager.userData.leads.length === 0) {
+                leadsList.innerHTML = '<p class="text-muted">No leads yet. Add your first lead!</p>';
+                return;
+            }
+            
+            leadsList.innerHTML = dataManager.userData.leads.map(lead => `
+                <div class="lead-item">
+                    <div>
+                        <strong>${lead.name}</strong><br>
+                        <small class="text-muted">${lead.email} | ${lead.phone}</small>
+                    </div>
+                    <div>
+                        <span class="badge bg-primary">${lead.status}</span>
+                        <button class="btn btn-sm btn-success ms-2" onclick="makePhoneCall('${lead.name}', '${lead.phone}')">
+                            <i class="fas fa-phone"></i> Call
+                            <span class="call-cost">-${dataManager.scoringSettings.callCost}</span>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update leads (admin)
+        function updateAdminLeads() {
+            const leadsList = document.getElementById('adminLeadsList');
+            const allLeads = dataManager.getAllLeads();
+            
+            if (allLeads.length === 0) {
+                leadsList.innerHTML = '<p class="text-muted">No leads found.</p>';
+                return;
+            }
+            
+            leadsList.innerHTML = allLeads.map(lead => `
+                <div class="lead-item">
+                    <div>
+                        <strong>${lead.name}</strong><br>
+                        <small class="text-muted">${lead.email} | ${lead.phone}</small><br>
+                        <small class="text-info">Added by: ${lead.userFullName} (${lead.userId})</small>
+                    </div>
+                    <div>
+                        <span class="badge bg-primary">${lead.status}</span>
+                        <span class="badge bg-secondary ms-1">${lead.createdAt}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update history (user)
+        function updateHistory() {
+            const historyList = document.getElementById('userHistoryList');
+            if (dataManager.userData.history.length === 0) {
+                historyList.innerHTML = '<p class="text-muted">No activity yet</p>';
+                return;
+            }
+            
+            historyList.innerHTML = dataManager.userData.history.map(item => `
+                <div class="lead-item">
+                    <div>
+                        <strong>${item.action}</strong><br>
+                        ${item.details}<br>
+                        <small class="text-muted">${item.date}</small>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update history (admin)
+        function updateAdminHistory() {
+            const historyList = document.getElementById('adminHistoryList');
+            const allHistory = dataManager.getAllHistory();
+            
+            if (allHistory.length === 0) {
+                historyList.innerHTML = '<p class="text-muted">No activity yet</p>';
+                return;
+            }
+            
+            historyList.innerHTML = allHistory.map(item => `
+                <div class="lead-item">
+                    <div>
+                        <strong>${item.action}</strong><br>
+                        ${item.details}<br>
+                        <small class="text-info">By: ${item.userFullName} (${item.userId})</small><br>
+                        <small class="text-muted">${item.date}</small>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update users (admin)
+        function updateAdminUsers() {
+            const usersList = document.getElementById('adminUsersList');
+            const users = dataManager.getAllUsers();
+            
+            if (users.length === 0) {
+                usersList.innerHTML = '<tr><td colspan="9" class="text-center">No users found.</td></tr>';
+                return;
+            }
+            
+            usersList.innerHTML = users.map(user => `
+                <tr>
+                    <td>${user.username}</td>
+                    <td>${user.fullName}</td>
+                    <td>${user.email}</td>
+                    <td>
+                        ${user.isAdmin ? 
+                            '<span class="badge bg-danger">Admin</span>' : 
+                            '<span class="badge bg-primary">User</span>'}
+                    </td>
+                    <td>
+                        <span class="score-badge">${user.score}</span>
+                    </td>
+                    <td>${user.leads}</td>
+                    <td>${user.calls}</td>
+                    <td>
+                        <span class="call-cost">-${dataManager.scoringSettings.callCost}/call</span>
+                    </td>
+                    <td>
+                        <div class="user-actions">
+                            <button class="btn btn-sm btn-info" onclick="viewUserData('${user.username}')">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                            <button class="btn btn-sm btn-warning" onclick="openScoreModal('${user.username}', '${user.fullName}', ${user.score})">
+                                <i class="fas fa-star"></i> Score
+                            </button>
+                            ${user.isAdmin ? 
+                                `<button class="btn btn-sm btn-secondary" onclick="confirmDemote('${user.username}', '${user.fullName}')">
+                                        <i class="fas fa-user-minus"></i> Demote
+                                </button>` :
+                                `<button class="btn btn-sm btn-success" onclick="confirmPromote('${user.username}', '${user.fullName}')">
+                                        <i class="fas fa-user-plus"></i> Promote
+                                </button>`
+                            }
+                            ${user.username !== 'admin' ? 
+                                `<button class="btn btn-sm btn-danger" onclick="confirmDeleteUser('${user.username}', '${user.fullName}')">
+                                        <i class="fas fa-trash"></i> Delete
+                                </button>` : ''
+                            }
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Make phone call
+        function makePhoneCall(leadName, phoneNumber) {
+            // Show call animation
+            showCallAnimation(phoneNumber);
+            
+            // Update UI
+            const result = dataManager.addCall(leadName);
+            updateUserDashboard();
+            
+            if (result.scoreChanged) {
+                showScoreChange(result.oldScore, result.newScore);
+            }
+        }
+
+        // View user data (admin)
+        function viewUserData(username) {
+            // This could open a modal with detailed user information
+            alert(`Viewing data for user: ${username}`);
+        }
+
+        // Confirm delete user
+        function confirmDeleteUser(username, fullName) {
+            currentUserToDelete = username;
+            document.getElementById('deleteUserModalMessage').innerHTML = 
+                `Are you sure you want to delete <strong>${fullName}</strong> (${username})?<br>
+                This will permanently remove all their data including leads, calls, and score history.`;
+            document.getElementById('deleteConfirmInput').value = '';
+            document.getElementById('confirmDeleteBtn').disabled = true;
+            document.getElementById('deleteUserModal').style.display = 'block';
+        }
+
+        // Close delete user modal
+        function closeDeleteUserModal() {
+            document.getElementById('deleteUserModal').style.display = 'none';
+            currentUserToDelete = null;
+        }
+
+        // Execute delete
+        function executeDelete() {
+            if (!currentUserToDelete) return;
+            
+            const confirmText = document.getElementById('deleteConfirmInput').value;
+            if (confirmText !== 'DELETE') {
+                alert('Please type DELETE exactly to confirm deletion.');
+                return;
+            }
+            
+            const result = dataManager.deleteUser(currentUserToDelete);
+            if (result.success) {
+                alert(result.message);
+                updateAdminUsers();
+                closeDeleteUserModal();
+            } else {
+                alert(result.message);
+            }
+        }
+
+        // Handle delete confirmation input
+        document.getElementById('deleteConfirmInput').addEventListener('input', function(e) {
+            const deleteBtn = document.getElementById('confirmDeleteBtn');
+            if (e.target.value === 'DELETE') {
+                deleteBtn.disabled = false;
+            } else {
+                deleteBtn.disabled = true;
+            }
+        });
+
+        // Open score modal
+        function openScoreModal(username, fullName, currentScore) {
+            currentScoreUser = username;
+            document.getElementById('scoreModalMessage').textContent = 
+                `Update score for ${fullName} (${username}):`;
+            document.getElementById('scoreInput').value = currentScore;
+            
+            // Load score history
+            const scoreHistory = dataManager.users[username].scoreHistory || [];
+            const historyList = document.getElementById('scoreHistoryList');
+            
+            if (scoreHistory.length === 0) {
+                historyList.innerHTML = '<p class="text-muted">No score history yet</p>';
+            } else {
+                historyList.innerHTML = scoreHistory.map(item => `
+                    <div class="score-history-item">
+                        <strong>${item.oldScore} → ${item.newScore}</strong> (${item.category})
+                        <br><small>${item.reason || 'No reason'} - ${item.date}</small>
+                    </div>
+                `).join('');
+            }
+            
+            document.getElementById('scoreModal').style.display = 'block';
+        }
+
+        // Close score modal
+        function closeScoreModal() {
+            document.getElementById('scoreModal').style.display = 'none';
+        }
+
+        // Set quick score
+        function setQuickScore(value) {
+            document.getElementById('scoreInput').value = value;
+        }
+
+        // Update score
+        function updateScore() {
+            const score = parseFloat(document.getElementById('scoreInput').value);
+            const category = document.getElementById('scoreCategory').value;
+            const reason = document.getElementById('scoreReason').value;
+            
+            if (isNaN(score)) {
+                alert('Please enter a valid score.');
+                return;
+            }
+            
+            const result = dataManager.updateScore(currentScoreUser, score, category, reason);
+            if (result.success) {
+                alert(result.message);
+                updateAdminUsers();
+                closeScoreModal();
+            } else {
+                alert(result.message);
+            }
+        }
+
+        // Open bulk score modal
+        function openBulkScoreModal() {
+            document.getElementById('bulkScoreModal').style.display = 'block';
+        }
+
+        // Close bulk score modal
+        function closeBulkScoreModal() {
+            document.getElementById('bulkScoreModal').style.display = 'none';
+        }
+
+        // Set all scores to specific value
+        function setAllScores(value) {
+            const result = dataManager.bulkUpdateScores('set', value);
+            alert(result.message);
+            updateAdminUsers();
+        }
+
+        // Add value to all scores
+        function addAllScores(value) {
+            const result = dataManager.bulkUpdateScores('add', value);
+            alert(result.message);
+            updateAdminUsers();
+        }
+
+        // Multiply all scores
+        function multiplyAllScores(value) {
+            const result = dataManager.bulkUpdateScores('multiply', value);
+            alert(result.message);
+            updateAdminUsers();
+        }
+
+        // Reset all scores
+        function resetAllScores() {
+            if (confirm('Are you sure you want to reset all scores to 0?')) {
+                setAllScores(0);
+            }
+        }
+
+        // Randomize all scores
+        function randomizeAllScores() {
+            for (const username in dataManager.users) {
+                if (username === 'admin') continue;
+                const randomScore = Math.floor(Math.random() * 1000);
+                dataManager.users[username].score = randomScore;
+            }
+            dataManager.saveAllData();
+            alert('All scores have been randomized!');
+            updateAdminUsers();
+        }
+
+        // Apply bulk score
+        function applyBulkScore() {
+            const value = parseFloat(document.getElementById('bulkScoreValue').value);
+            const operation = document.getElementById('bulkOperation').value;
+            
+            if (isNaN(value)) {
+                alert('Please enter a valid value.');
+                return;
+            }
+            
+            const result = dataManager.bulkUpdateScores(operation, value);
+            alert(result.message);
+            updateAdminUsers();
+            closeBulkScoreModal();
+        }
+
+        // Confirm promote user to admin
+        function confirmPromote(username, fullName) {
+            document.getElementById('adminModalMessage').textContent = 
+                `Are you sure you want to promote ${fullName} (${username}) to admin? This will give them full access to the system.`;
+            document.getElementById('confirmAdminBtn').textContent = 'Promote to Admin';
+            document.getElementById('confirmAdminBtn').className = 'btn btn-success';
+            document.getElementById('confirmAdminBtn').onclick = function() {
+                promoteToAdmin(username);
+                closeModal();
+            };
+            document.getElementById('adminModal').style.display = 'block';
+        }
+
+        // Confirm demote admin to user
+        function confirmDemote(username, fullName) {
+            document.getElementById('adminModalMessage').textContent = 
+                `Are you sure you want to demote ${fullName} (${username}) from admin to regular user? They will lose admin access.`;
+            document.getElementById('confirmAdminBtn').textContent = 'Demote to User';
+            document.getElementById('confirmAdminBtn').className = 'btn btn-warning';
+            document.getElementById('confirmAdminBtn').onclick = function() {
+                demoteFromAdmin(username);
+                closeModal();
+            };
+            document.getElementById('adminModal').style.display = 'block';
+        }
+
+        // Promote user to admin
+        function promoteToAdmin(username) {
+            const result = dataManager.promoteToAdmin(username);
+            if (result.success) {
+                alert(result.message);
+                updateAdminUsers();
+            } else {
+                alert(result.message);
+            }
+        }
+
+        // Demote admin to user
+        function demoteFromAdmin(username) {
+            const result = dataManager.demoteFromAdmin(username);
+            if (result.success) {
+                alert(result.message);
+                updateAdminUsers();
+            } else {
+                alert(result.message);
+            }
+        }
+
+        // Modal functions
+        function closeModal() {
+            document.getElementById('adminModal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const adminModal = document.getElementById('adminModal');
+            const scoreModal = document.getElementById('scoreModal');
+            const bulkScoreModal = document.getElementById('bulkScoreModal');
+            const deleteUserModal = document.getElementById('deleteUserModal');
+            
+            if (event.target === adminModal) {
+                closeModal();
+            }
+            
+            if (event.target === scoreModal) {
+                closeScoreModal();
+            }
+            
+            if (event.target === bulkScoreModal) {
+                closeBulkScoreModal();
+            }
+            
+            if (event.target === deleteUserModal) {
+                closeDeleteUserModal();
+            }
+        }
+
+        // Logout
+        function logout() {
+            dataManager.logout();
+            
+            document.getElementById('userDashboardSection').classList.add('hidden');
+            document.getElementById('adminDashboardSection').classList.add('hidden');
+            document.getElementById('loginSection').classList.remove('hidden');
+            
+            // Clear form
+            document.getElementById('loginForm').reset();
+        }
+
+        // Check for auto-login on page load
+        window.onload = function() {
+            if (dataManager.currentUser) {
+                document.getElementById('loginSection').classList.add('hidden');
+                
+                if (dataManager.currentUser.isAdmin) {
+                    // Show admin dashboard
+                    document.getElementById('adminDashboardSection').classList.remove('hidden');
+                    document.getElementById('adminUserDisplay').textContent = dataManager.currentUser.fullName;
+                    updateAdminDashboard();
+                } else {
+                    // Show user dashboard
+                    document.getElementById('userDashboardSection').classList.remove('hidden');
+                    document.getElementById('userDisplay').textContent = dataManager.currentUser.fullName;
+                    document.getElementById('userIdDisplay').textContent = dataManager.currentUser.username;
+                    updateUserDashboard();
+                }
+            }
+        };
+    </script>
+</body>
+</html>
